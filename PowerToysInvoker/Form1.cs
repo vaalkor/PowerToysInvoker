@@ -37,11 +37,6 @@ namespace PowerToysInvoker
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(System.Drawing.Point pt);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern bool SetSystemCursor(IntPtr hcur, uint id);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern bool GetCursorInfo(out CURSORINFO pci);
 
         // Mouse hook struct to access the mouse event information
         [StructLayout(LayoutKind.Sequential)]
@@ -53,17 +48,6 @@ namespace PowerToysInvoker
             public int time;
             public IntPtr dwExtraInfo;
         }
-
-        // Define the CURSORINFO structure
-        [StructLayout(LayoutKind.Sequential)]
-        public struct CURSORINFO
-        {
-            public uint cbSize;
-            public uint flags;
-            public IntPtr hCursor;
-            public System.Drawing.Point ptScreenPos;
-        }
-
 
         public delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam); // Delegate for the hook procedure
         private IntPtr _mouseHookHandle = IntPtr.Zero; // Store the hook handle
@@ -100,27 +84,18 @@ namespace PowerToysInvoker
         public PowerToysInvoker()
         {
             InitializeComponent();
-            CenterFormOnFocusedScreen();
+            CenterFormOnMouse();
             ReadJsonFiles();
             InstallMouseHook();
-            //GetCurrentCursor();
+            KeyPreview = true; // Enable key preview for the form
+            KeyDown += Form_KeyDown; // Attach the keydown event handler
         }
 
-        // Method to change the cursor globally
-        public static void ChangeGlobalCursor(IntPtr cursorHandle)
+        private void Form_KeyDown(object sender, KeyEventArgs e)
         {
-            SetSystemCursor(cursorHandle, OCR_NORMAL_CURSOR);
-            //SystemParametersInfo(SPI_SETCURSORS, 0, cursorHandle, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
-        }
-
-        private void GetCurrentCursor()
-        {
-            CURSORINFO cursorInfo;
-            cursorInfo.cbSize = (uint)Marshal.SizeOf(typeof(CURSORINFO));
-
-            if (GetCursorInfo(out cursorInfo))
+            if (e.KeyCode == Keys.Escape) // Check if the Escape key is pressed
             {
-                _originalCursorHandle = cursorInfo.hCursor;
+                Close(); // Close the form
             }
         }
 
@@ -156,45 +131,46 @@ namespace PowerToysInvoker
             ReleaseControlKeys(config);
         }
 
-        private void CenterFormOnFocusedScreen()
+        /// <summary>
+        /// Centers the form on the current mouse position, but clamps if it would cross any boundaries.
+        /// </summary>
+        private void CenterFormOnMouse()
         {
-            // Get the screen where the mouse cursor is currently located
-            var screen = Screen.FromPoint(Cursor.Position);
+            Screen currentScreen = Screen.FromPoint(Cursor.Position);
 
-            // Calculate the center of that screen
-            int centerX = screen.Bounds.Left + (screen.Bounds.Width / 2) - (this.Width / 2);
-            int centerY = screen.Bounds.Top + (screen.Bounds.Height / 2) - (this.Height / 2);
-
-            // Set the form's location to the calculated center
-            this.StartPosition = FormStartPosition.Manual;
-            this.Location = new System.Drawing.Point(centerX, centerY);
+            var clampedX = Utils.Clamp(Cursor.Position.X - Width / 2, 0, currentScreen.WorkingArea.Width - Width);
+            var clampedY = Utils.Clamp(Cursor.Position.Y - Height / 2, 0, currentScreen.WorkingArea.Height - Height);
+            
+            Left = clampedX;
+            Top = clampedY;
         }
 
         private void TextExtractor_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
             PressAndReleaseControlKeyForPowerToy(PowerToyNames.TextExtractor);
-            this.Close();
+            Close();
         }
+
         private void ColourPicker_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
             PressAndReleaseControlKeyForPowerToy(PowerToyNames.ColorPicker);
-            this.Close();
+            Close();
         }
 
         private void FancyZones_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
             PressAndReleaseControlKeyForPowerToy(PowerToyNames.FancyZones);
-            this.Close();
+            Close();
         }
 
         private void ScreenRuler_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
             PressAndReleaseControlKeyForPowerToy(PowerToyNames.MeasureTool);
-            this.Close();
+            Close();
         }
 
 
@@ -202,7 +178,7 @@ namespace PowerToysInvoker
         {
             if (!isEyedropperActive)
             {
-                this.Hide();
+                Hide();
                 isEyedropperActive = true;
             }
         }
@@ -220,13 +196,14 @@ namespace PowerToysInvoker
 
             foreach (var powerToyName in ConfigRetrievalFunctions.Keys)
             {
-
                 string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string powerToyPath = Path.Combine(appDataPath, $"Microsoft\\PowerToys\\{powerToyName}\\settings.json");
 
+                if (!File.Exists(powerToyPath))
+                    ErrorAndClose($"Could not find file: \"{powerToyPath}\"");
+
                 string json = File.ReadAllText(powerToyPath);
                 JObject configFile = JObject.Parse(json);
-
 
                 PowerToysHotKeys[powerToyName] = ConfigRetrievalFunctions[powerToyName](configFile);
             }
@@ -240,7 +217,7 @@ namespace PowerToysInvoker
 
             if (_mouseHookHandle == IntPtr.Zero)
             {
-                MessageBox.Show("Failed to set hook!");
+                ErrorAndClose("Failed to set mouse hook!");
             }
         }
 
@@ -251,7 +228,7 @@ namespace PowerToysInvoker
                 return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam);
 
 
-            // Check if the event is a mouse click (left or right button down)
+            // Check if the event is a left mouse button
             if (wParam == (IntPtr)WM_LBUTTONDOWN)
             {
                 Console.WriteLine("Left mouse button clicked!");
@@ -262,7 +239,7 @@ namespace PowerToysInvoker
 
                 IntPtr hwndClicked = WindowFromPoint(clickPosition);
 
-                if (hwndClicked == this.Handle)
+                if (hwndClicked == Handle)
                     return CallNextHookEx(_mouseHookHandle, nCode, wParam, lParam); // If we've clicked on ourself, ignore the click.
 
                 if (hwndClicked != IntPtr.Zero)
@@ -272,8 +249,7 @@ namespace PowerToysInvoker
                     PressAndReleaseControlKeyForPowerToy(PowerToyNames.AlwaysOnTop);
                 }
 
-                //ChangeGlobalCursor(_originalCursorHandle);
-                this.Close();
+                Close();
             }
 
             // Pass the message to the next hook
@@ -285,13 +261,13 @@ namespace PowerToysInvoker
         {
             base.OnFormClosing(e);
 
-            // Remove the hook
             UnhookWindowsHookEx(_mouseHookHandle);
         }
 
-        private void PowerToysInvoker_Load(object sender, EventArgs e)
+        private void ErrorAndClose(string error)
         {
-
+            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Close();
         }
     }
 }

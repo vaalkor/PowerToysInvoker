@@ -38,9 +38,9 @@
             // 
             // TextExtractor
             // 
-            this.TextExtractor.Location = new System.Drawing.Point(2, 3);
+            this.TextExtractor.Location = new System.Drawing.Point(2, 32);
             this.TextExtractor.Name = "TextExtractor";
-            this.TextExtractor.Size = new System.Drawing.Size(154, 23);
+            this.TextExtractor.Size = new System.Drawing.Size(182, 23);
             this.TextExtractor.TabIndex = 0;
             this.TextExtractor.Text = "Text Extractor";
             this.TextExtractor.UseVisualStyleBackColor = true;
@@ -48,9 +48,9 @@
             // 
             // AlwaysOnTop
             // 
-            this.AlwaysOnTop.Location = new System.Drawing.Point(2, 32);
+            this.AlwaysOnTop.Location = new System.Drawing.Point(2, 3);
             this.AlwaysOnTop.Name = "AlwaysOnTop";
-            this.AlwaysOnTop.Size = new System.Drawing.Size(154, 23);
+            this.AlwaysOnTop.Size = new System.Drawing.Size(182, 23);
             this.AlwaysOnTop.TabIndex = 1;
             this.AlwaysOnTop.Text = "Always On Top";
             this.AlwaysOnTop.UseVisualStyleBackColor = true;
@@ -60,7 +60,7 @@
             // 
             this.ColourPicker.Location = new System.Drawing.Point(2, 61);
             this.ColourPicker.Name = "ColourPicker";
-            this.ColourPicker.Size = new System.Drawing.Size(154, 23);
+            this.ColourPicker.Size = new System.Drawing.Size(182, 23);
             this.ColourPicker.TabIndex = 2;
             this.ColourPicker.Text = "ColourPicker";
             this.ColourPicker.UseVisualStyleBackColor = true;
@@ -68,9 +68,9 @@
             // 
             // FancyZones
             // 
-            this.FancyZones.Location = new System.Drawing.Point(2, 90);
+            this.FancyZones.Location = new System.Drawing.Point(2, 119);
             this.FancyZones.Name = "FancyZones";
-            this.FancyZones.Size = new System.Drawing.Size(154, 23);
+            this.FancyZones.Size = new System.Drawing.Size(182, 23);
             this.FancyZones.TabIndex = 3;
             this.FancyZones.Text = "Fancy Zones";
             this.FancyZones.UseVisualStyleBackColor = true;
@@ -78,9 +78,9 @@
             // 
             // ScreenRuler
             // 
-            this.ScreenRuler.Location = new System.Drawing.Point(2, 119);
+            this.ScreenRuler.Location = new System.Drawing.Point(2, 90);
             this.ScreenRuler.Name = "ScreenRuler";
-            this.ScreenRuler.Size = new System.Drawing.Size(154, 23);
+            this.ScreenRuler.Size = new System.Drawing.Size(182, 23);
             this.ScreenRuler.TabIndex = 4;
             this.ScreenRuler.Text = "Screen Ruler";
             this.ScreenRuler.UseVisualStyleBackColor = true;
@@ -90,16 +90,18 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(158, 146);
+            this.ClientSize = new System.Drawing.Size(187, 147);
             this.Controls.Add(this.ScreenRuler);
             this.Controls.Add(this.FancyZones);
             this.Controls.Add(this.ColourPicker);
             this.Controls.Add(this.AlwaysOnTop);
             this.Controls.Add(this.TextExtractor);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PowerToysInvoker";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "PToys";
-            this.Load += new System.EventHandler(this.PowerToysInvoker_Load);
+            this.TopMost = true;
             this.ResumeLayout(false);
 
         }
