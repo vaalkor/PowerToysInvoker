@@ -288,5 +288,10 @@ namespace PowerToysInvoker
             // Remove the hook
             UnhookWindowsHookEx(_mouseHookHandle);
         }
+
+        private void PowerToysInvoker_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

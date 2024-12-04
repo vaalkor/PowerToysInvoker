@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerToysInvoker));
             this.TextExtractor = new System.Windows.Forms.Button();
             this.AlwaysOnTop = new System.Windows.Forms.Button();
             this.ColourPicker = new System.Windows.Forms.Button();
@@ -95,8 +96,10 @@
             this.Controls.Add(this.ColourPicker);
             this.Controls.Add(this.AlwaysOnTop);
             this.Controls.Add(this.TextExtractor);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PowerToysInvoker";
             this.Text = "PToys";
+            this.Load += new System.EventHandler(this.PowerToysInvoker_Load);
             this.ResumeLayout(false);
 
         }
