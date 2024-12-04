@@ -62,7 +62,7 @@
             this.ColourPicker.Name = "ColourPicker";
             this.ColourPicker.Size = new System.Drawing.Size(182, 23);
             this.ColourPicker.TabIndex = 2;
-            this.ColourPicker.Text = "ColourPicker";
+            this.ColourPicker.Text = "Color Picker";
             this.ColourPicker.UseVisualStyleBackColor = true;
             this.ColourPicker.Click += new System.EventHandler(this.ColourPicker_Click);
             // 

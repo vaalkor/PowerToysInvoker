@@ -85,17 +85,17 @@ namespace PowerToysInvoker
         {
             InitializeComponent();
             CenterFormOnMouse();
-            ReadJsonFiles();
+            ReadPowertoysConfigFiles();
             InstallMouseHook();
-            KeyPreview = true; // Enable key preview for the form
-            KeyDown += Form_KeyDown; // Attach the keydown event handler
+            KeyPreview = true;
+            KeyDown += Form_KeyDown;
         }
 
         private void Form_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Escape) // Check if the Escape key is pressed
+            if (e.KeyCode == Keys.Escape)
             {
-                Close(); // Close the form
+                Close();
             }
         }
 
@@ -183,7 +183,7 @@ namespace PowerToysInvoker
             }
         }
 
-        private void ReadJsonFiles()
+        private void ReadPowertoysConfigFiles()
         {
             Dictionary<string, Func<JObject, KeyConfiguration>> ConfigRetrievalFunctions = new Dictionary<string, Func<JObject, KeyConfiguration>>
             {
